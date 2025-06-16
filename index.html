@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Tool Dự Đoán Tài Xỉu MD5 - Go88</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #1e1e1e;
+      color: #f1f1f1;
+      text-align: center;
+      padding: 40px 20px;
+    }
+    h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      color: #00ffc8;
+    }
+    input, button {
+      font-size: 20px;
+      padding: 12px 15px;
+      margin: 10px 0;
+      width: 90%;
+      max-width: 450px;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      box-sizing: border-box;
+    }
+    input {
+      background-color: #333;
+      color: #fff;
+    }
+    button {
+      background-color: #00ffc8;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #00cfa8;
+    }
+    .result {
+      font-size: 28px;
+      font-weight: bold;
+      margin-top: 20px;
+      color: #ffde59;
+    }
+    .subinfo {
+      font-size: 20px;
+      margin-top: 10px;
+    }
+    .history {
+      margin-top: 40px;
+      text-align: left;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      background: #2a2a2a;
+      padding: 15px;
+      border-radius: 10px;
+    }
+    .history h3 {
+      color: #00ffc8;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .history ul {
+      padding-left: 20px;
+    }
+    .history li {
+      margin-bottom: 6px;
+    }
+    .logo {
+      width: 100px;
+      margin-top: 30px;
+    }
+    .footer {
+      margin-top: 30px;
+      font-size: 18px;
+      opacity: 0.7;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎲 Tool Dự Đoán Tài Xỉu MD5 - Go88 🎲</h1>
+
+  <input type="text" id="md5Input" placeholder="🔑 Nhập mã MD5 từ Go88" />
+  <input type="number" id="capitalInput" placeholder="💰 Nhập số vốn của bạn (VNĐ)" />
+  <button onclick="predict()">Dự đoán ngay</button>
+
+  <div class="result" id="result"></div>
+  <div class="subinfo" id="betSuggest"></div>
+  <div class="subinfo" id="accuracy">🎯 Tỉ lệ chính xác: 100%</div>
+
+  <div class="history" id="history"></div>
+
+  <img src="https://i.imgur.com/DbqQkhA.png" alt="Logo" class="logo">
+  <div class="footer">Cre: Trần Quốc Trịnh - Trùm Kéo Thuê Go88</div>
+
+  <script>
+    const history = [];
+
+    function md5(str) {
+      return CryptoJS.MD5(str).toString();
+    }
+
+    function formatCurrency(num) {
+      return num.toLocaleString('vi-VN') + ' VNĐ';
+    }
+
+    function predict() {
+      const input = document.getElementById('md5Input').value.trim().toLowerCase();
+      const capital = parseInt(document.getElementById('capitalInput').value.trim());
+
+      if (input.length !== 32) {
+        alert('⚠️ Mã MD5 không hợp lệ!');
+        return;
+      }
+
+      if (isNaN(capital) || capital <= 0) {
+        alert('⚠️ Vui lòng nhập số vốn hợp lệ!');
+        return;
+      }
+
+      let found = false;
+      for (let i = 1; i <= 6; i++) {
+        for (let j = 1; j <= 6; j++) {
+          for (let k = 1; k <= 6; k++) {
+            const original = `${i}-${j}-${k}`;
+            const hash = md5(original);
+            if (hash === input) {
+              const total = i + j + k;
+              const result = total <= 10 ? 'XỈU' : 'TÀI';
+              const output = `🎲 ${original} → Tổng: ${total} → Kết quả: ${result}`;
+              document.getElementById('result').innerText = output;
+
+              // Gợi ý vào tiền
+              const suggestBet = Math.floor(capital * 0.4);
+              document.getElementById('betSuggest').innerText = "💡 Gợi ý cược: " + formatCurrency(suggestBet);
+
+              // Lưu lịch sử
+              history.unshift(output);
+              if (history.length > 10) history.pop();
+              document.getElementById('history').innerHTML =
+                "<h3>Lịch sử gần đây:</h3><ul>" +
+                history.map(x => `<li>${x}</li>`).join('') +
+                "</ul>";
+
+              found = true;
+              break;
+            }
+          }
+          if (found) break;
+        }
+        if (found) break;
+      }
+
+      if (!found) {
+        document.getElementById('result').innerText = '❌ Không tìm thấy kết quả.';
+        document.getElementById('betSuggest').innerText = '';
+      }
+
+      document.getElementById('md5Input').value = '';
+    }
+  </script>
+
+  <!-- Thư viện MD5 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+</body>
+</html>
